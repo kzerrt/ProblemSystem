@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.florence.dao.TeacherMapper">
+
+
+    <insert id="addTeacher">
+        insert into teacher value(null,#{name},#{sex},#{birthday},#{inTime},
+        <if test="countId != null and countId != ''">
+            count_id = #{countId},
+        </if>
+        null);
+    </insert>
+
+
+    <select id="getPage" resultType="com.florence.pojo.Teacher">
+        select * from teacher
+        <if test="name != null and name != ''">
+            where name like #{name}
+        </if>
+        limit #{page} , #{pageSize};
+    </select>
+    <select id="getTotal" resultType="java.lang.Integer">
+        select count(name) from teacher
+        <if test="name != null and name != ''">
+            where name like #{name}
+        </if>
+
+    </select>
+
+
+    <delete id="deleteByIds">
+        delete from teacher
+        <where>
+            id in
+            <foreach collection="ids" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </where>
+
+    </delete>
+    <update id="status">
+    update teacher set status = #{status}
+    where
+    id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+        <if test="id != null">
+            #{id}
+        </if>
+    </foreach>
+    </update>
+    <update id="updateTeacher">
+        update teacher set
+         <set>
+
+             <if test="name != null and name != ''">
+                 name = #{name},
+             </if>
+             <if test="sex != null and sex != ''">
+                sex = #{sex},
+             </if>
+             <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+             </if>
+             <if test="countId != null and countId != ''">
+                count_id = #{countId}
+             </if>
+         </set>
+        where id = #{id};
+    </update>
+</mapper>
+
