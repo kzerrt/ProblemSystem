@@ -7,7 +7,6 @@
   <title>Document</title>
   <!-- 引入样式 -->
   <link rel="stylesheet" href="../../plugins/element-ui/index.css" />
-  <!--<link rel="stylesheet" href="../../styles/common.css" />-->
   <link rel="stylesheet" href="../../styles/page.css" />
   <style>
     .dashboard-container .container .tableBox .el-image img {
@@ -15,7 +14,6 @@
       border-radius: 26px;
     }
   </style>
-
 </head>
 <body>
    <div class="dashboard-container" id="combo-app">
@@ -23,7 +21,7 @@
       <div class="tableBar">
         <el-input
           v-model="input"
-          placeholder="请输入班级名称"
+          placeholder="请输入课程名称"
           style="width: 250px"
           clearable
           @keyup.enter.native="handleQuery"
@@ -33,19 +31,20 @@
         <span v-if ="input !== ''" style="height: 40px">
         <el-button
                 type="text"
-                style="margin-right: 650px"
+                style="margin-right: 560px"
                 @click="init"
         >
-          <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;margin-top: 0px" />
+          <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;" />
         </el-button>
         </span>
 
-        <div class="tableLab">
+        <div class="tableLab" >
+          <span v-if="!dialogFormVisible">
           <el-button
-               type="text"
-               size="small"
-              style="color: #fdd24c;border-right: solid 1px #d8dde3;"
-              @click="deleteHandle('批量')"
+                  type="text"
+                  size="small"
+                  style="color: #fdd24c;border-right: solid 1px #d8dde3;"
+                  @click="deleteHandle('批量')"
           >
             批量删除&nbsp&nbsp&nbsp
           </el-button>
@@ -60,48 +59,57 @@
           </el-button>
 
           <el-button
-            type="text"
-            style="color: #f56c6c"
-            @click="statusHandle('0')"
+                  type="text"
+                  style="color: #f56c6c"
+                  @click="statusHandle('0')"
           >批量停用</el-button>
 
           <el-button
-            type="primary"
-            style="background: #8cc5ff"
-            @click="addClass('add')"
+                  type="primary"
+                  style="background: #8cc5ff"
+                  @click="add('add')"
+                  icon="el-icon-plus"
           >
-            + 新建班级
+            添加课程
           </el-button>
+          </span>
+          <span v-else>
+             <el-input
+                     v-model="courseName"
+                     placeholder="请输入课程名称"
+                     style="width: 250px"
+                     clearable
+             >
+          </el-input>
+          <el-button type="success" icon="el-icon-check" circle @click="add('submit')"></el-button>
+            <el-button type="danger" icon="el-icon-close" circle @click="close()"></el-button>
+          </span>
         </div>
+
       </div>
       <el-table
         :data="tableData"
         stripe
-        class="tableBox"
         width="500"
+        class="tableBox"
         @selection-change="handleSelectionChange"
       >
         <el-table-column
           type="selection"
-          width="100"
+          width="80"
         ></el-table-column>
         <el-table-column
                 prop="id"
-                width="250"
-                label="班级编号"
+                width="300"
+                label="课程编号"
         ></el-table-column>
         <el-table-column
           prop="name"
-          width="250"
-          label="班级名称"
-        ></el-table-column>
-        <el-table-column
-                prop="number"
-                width="250"
-                label="班级人数"
+          width="400"
+          label="课程名称"
         ></el-table-column>
 
-        <el-table-column label="班级状态">
+        <el-table-column label="状态">
           <template slot-scope="scope">
             <span>{{ scope.row.status === '0' ? '停用' : '启用' }}</span>
           </template>
@@ -114,13 +122,27 @@
         >
           <template slot-scope="scope">
 
-            <el-button
-                type="text"
-                @click="addClass(scope.row.id)"
+            <el-popover
+                    placement="right"
+                    width="300"
+                    trigger="click"
             >
-              <img src="../../images/icons/edit.png" style="width: 20px;height: 20px" />
-            </el-button>
-
+              <el-input
+                      v-model="editName"
+                      placeholder="请修改课程名称"
+                      style="width: 250px"
+                      clearable
+              >
+              </el-input>
+              <el-button type="success" icon="el-icon-check" circle @click="edit(scope.row.id,editName,false)"></el-button>
+              <el-button
+                      slot="reference"
+                      type="text"
+                      @click="edit(scope.row.id,scope.row.name,true)"
+              >
+                <img src="../../images/icons/edit.png" style="width: 20px;height: 20px"/>
+              </el-button>
+            </el-popover>
             <el-button
               type="text"
               @click="statusHandle(scope.row)"
@@ -139,6 +161,7 @@
             >
               <img src="../../images/icons/del.png" style="width: 20px;height: 20px" />
             </el-button>
+
           </template>
         </el-table-column>
       </el-table>
@@ -152,7 +175,10 @@
         :current-page.sync="page"
         @current-change="handleCurrentChange"
       ></el-pagination>
+
+
     </div>
+
   </div>
     <!-- 开发环境版本，包含了有帮助的命令行警告 -->
     <script src="../../plugins/vue/vue.js"></script>
@@ -161,7 +187,7 @@
     <!-- 引入axios -->
     <script src="../../plugins/axios/axios.min.js"></script>
     <script src="../../js/request.js"></script>
-    <script src="../../api/class.js"></script>
+    <script src="../../api/course.js"></script>
     <script>
       new Vue({
         el: '#combo-app',
@@ -171,14 +197,16 @@
              counts: 0,
              page: 1,
              pageSize: 10,
+            courseName:'',
+            editName:'',
              tableData : [
                {
                  id:'123',
-                 name:'adfalf',
-                 number:'23',
-                 status:'0'
+                 name:'231',
+                 status:'1'
                }
              ],
+            dialogFormVisible : false,
           }
         },
         computed: {},
@@ -197,7 +225,7 @@
               pageSize: this.pageSize,
               name: this.input ? this.input : undefined
             }
-            await getClassPage(params).then(res => {
+            await getCoursePage(params).then(res => {
               if (String(res.code) === '1') {
                 this.tableData = res.data.list || []
                 this.counts = res.data.total
@@ -206,9 +234,6 @@
               this.$message.error('请求出错了：' + err)
             })
           },
-          /*getImage (image) {
-            return `/common/download?name=${image}`
-          },*/
           /**
            * 页面初始页码
            * */
@@ -217,19 +242,43 @@
             this.init();
           },
           // 添加
-          addClass (st) {
+          add(st) {
             if (st === 'add'){
-              window.parent.menuHandle({
-                id: '1',
-                url: 'page/classManger/add.html',
-                name: '添加班级'
-              },true)
-            } else {
-              window.parent.menuHandle({
-                id: '1',
-                url: 'page/classManger/add.html?id='+st,
-                name: '修改班级'
-              },true)
+              this.dialogFormVisible = true;
+            }else{
+              if(this.courseName === ''){
+                this.$message.error('请输入课程名');
+              }else{
+                addCourse(this.courseName).then(res =>{
+                  if(res.code === 1){
+                    this.init()
+                    this.courseName = '';
+                    this.dialogFormVisible = false;
+                  }else{
+                    this.$message.error(res.msg || '操作失败')
+                  }
+                }).catch(err => {
+                  this.$message.error('请求出错了：' + err)
+                })
+              }
+            }
+          },
+          edit(code,value,flag){
+            if(flag)
+                this.editName = value;
+            else{
+              let pram = {
+                id : code,
+                name : value
+              }
+                editCourse(pram).then(res=>{
+                  if(res.code === 1){
+
+                    this.init();
+                  }else{
+                    this.$message.error(res.msg || '操作失败')
+                  }
+                })
             }
           },
 
@@ -240,11 +289,11 @@
                 return this.$message.error('请选择删除对象')
               }
             }
-            this.$confirm('确定删除该班级, 是否继续?', '确定删除', {
+            this.$confirm('确定删除, 是否继续?', '确定删除', {
               'confirmButtonText': '确定',
               'cancelButtonText': '取消',
             }).then(() => {
-              deleteClass(type === '批量' ? this.checkList.join(',') : id).then(res => {
+              deleteCourse(type === '批量' ? this.checkList.join(',') : id).then(res => {
                 if (res.code === 1) {
                   if(res.data === 'success')
                     this.$message.success('删除成功！');
@@ -274,15 +323,14 @@
               params.ids = row.id
               params.status = row.status ? '0' : '1'
             }
-            this.$confirm('确认更改该班级状态?', '提示', {
+            this.$confirm('确认更改该状态?', '提示', {
               'confirmButtonText': '确定',
               'cancelButtonText': '取消',
               'type': 'warning'
             }).then(() => {
-              // 起售停售---批量起售停售接口
-              ClassStatusByStatus(params).then(res => {
+             CourseStatusByStatus(params).then(res => {
                 if (res.code === 1) {
-                  this.$message.success('班级状态已经更改成功！')
+                  this.$message.success('状态已经更改成功！')
                   this.handleQuery()
                 } else {
                   this.$message.error(res.msg || '操作失败')
@@ -293,6 +341,9 @@
             })
           },
 
+          close(){
+            this.dialogFormVisible = false;
+          },
           // 全部操作
           handleSelectionChange (val){
             let checkArr = []

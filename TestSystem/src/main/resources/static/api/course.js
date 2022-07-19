@@ -1,51 +1,51 @@
 // 查询列表数据
-const getSetmealPage = (params) => {
+const getCoursePage = (params) => {
   return $axios({
-    url: '/setmeal/page',
+    url: '/course/page',
     method: 'get',
     params
   })
 }
 
 // 删除数据接口
-const deleteSetmeal = (ids) => {
+const deleteCourse = (ids) => {
   return $axios({
-    url: '/setmeal',
+    url: '/course',
     method: 'delete',
     params: { ids }
   })
 }
 
 // 修改数据接口
-const editSetmeal = (params) => {
+const editCourse = (params) => {
   return $axios({
-    url: '/setmeal',
+    url: '/course',
     method: 'put',
     data: { ...params }
   })
 }
 
 // 新增数据接口
-const addSetmeal = (params) => {
+const addCourse = (params) => {
   return $axios({
-    url: '/setmeal',
+    url: '/course/add',
     method: 'post',
     data: { ...params }
   })
 }
 
 // 查询详情接口
-const querySetmealById = (id) => {
+const queryCourseById = (id) => {
   return $axios({
-    url: `/setmeal/${id}`,
+    url: `/course/query/`+ id,
     method: 'get'
   })
 }
 
 // 批量起售禁售
-const setmealStatusByStatus = (params) => {
+const CourseStatusByStatus = (params) => {
   return $axios({
-    url: `/setmeal/status/${params.status}`,
+    url: `/course/status/${params.status}`,
     method: 'post',
     params: { ids: params.ids }
   })

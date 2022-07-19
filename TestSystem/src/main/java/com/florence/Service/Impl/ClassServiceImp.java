@@ -21,6 +21,12 @@ public class ClassServiceImp implements ClassService {
 
 
     @Override
+    public List<Cal> getClasses() {
+
+        return classMapper.getClasses();
+    }
+
+    @Override
     public ClassManger getPage(Integer page, Integer pageSize, String name) {
         List<Cal> page1 = classMapper.getPage(page, pageSize, name);
         Integer total = classMapper.getTotal(name);

@@ -43,6 +43,12 @@ public class ClassController {
 
     }
 
+    @GetMapping("/classes")
+    public R<List<Cal>> getClasses(){
+        List<Cal> classes = classService.getClasses();
+        return R.success(classes);
+    }
+
     /**
      * 添加班级信息
      * */

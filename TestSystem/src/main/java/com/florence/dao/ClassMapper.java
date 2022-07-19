@@ -15,6 +15,9 @@ import java.util.List;
 @Mapper
 public interface ClassMapper {
 
+    @Select("select * from class where status != 0;")
+    List<Cal> getClasses();
+
     List<Cal> getPage(Integer page,Integer pageSize,String name);
 
     Integer getTotal(String name);

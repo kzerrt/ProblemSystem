@@ -31,7 +31,7 @@
         <span v-if ="input !== ''" style="height: 40px">
         <el-button
                 type="text"
-                style="margin-right: 700px"
+                style="margin-right: 560px"
                 @click="init"
         >
           <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;margin-top: 0px;" />
@@ -86,7 +86,7 @@
         ></el-table-column>
         <el-table-column
                 prop="id"
-                width="150"
+                width="130"
                 label="教师编号"
         ></el-table-column>
         <el-table-column
@@ -96,12 +96,12 @@
         ></el-table-column>
         <el-table-column
                 prop="sex"
-                width="150"
+                width="130"
                 label="教师性别"
         ></el-table-column>
         <el-table-column
                 prop="birthday"
-                width="180"
+                width="150"
                 label="教师年龄"
         ></el-table-column>
         <el-table-column
@@ -124,7 +124,7 @@
 
             <el-button
                 type="text"
-                @click="addTeacher(scope.row.id)"
+                @click="add(scope.row.id)"
             >
               <img src="../../images/icons/edit.png" style="width: 20px;height: 20px" />
             </el-button>
@@ -179,16 +179,7 @@
              counts: 0,
              page: 1,
              pageSize: 10,
-             tableData : [
-               {
-                 id:'',
-                 name:'',
-                 sex:'',
-                 birthday:'',
-                 inTime:'',
-                 status:''
-               }
-             ],
+             tableData : [],
           }
         },
         computed: {},
@@ -224,7 +215,7 @@
             this.init();
           },
           // 添加
-          addTeacher(st) {
+          add(st) {
             if (st === 'add'){
               window.parent.menuHandle({
                 id: '3',

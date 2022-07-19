@@ -46,11 +46,11 @@
           label-width="460px"
         >
           <div>
-            <el-form-item label="教师姓名:" prop="name">
-              <el-input v-model="ruleForm.name" placeholder="请填写教师姓名" maxlength="20"/>
+            <el-form-item label="学生姓名:" prop="name">
+              <el-input v-model="ruleForm.name" placeholder="请填写学生姓名" maxlength="20"/>
             </el-form-item>
-            <el-form-item label="教师性别:" prop="sex" >
-              <el-select v-model="ruleForm.sex" placeholder="请选择教师性别">
+            <el-form-item label="学生性别:" prop="sex" >
+              <el-select v-model="ruleForm.sex" placeholder="请选择学生性别">
                 <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -60,19 +60,29 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="教师年龄" prop="birthday">
-              <el-input v-model="ruleForm.birthday" placeholder="教师年龄" maxlength="20"/>
+            <el-form-item label="学生年龄" prop="birthday">
+              <el-input v-model="ruleForm.birthday" placeholder="学生年龄" maxlength="20"/>
 
             </el-form-item>
-            <el-form-item label="入职时间:" prop="inTime" >
+            <el-form-item label="入学时间:" prop="inTime" >
               <el-date-picker
                       v-model="ruleForm.inTime"
                       type="year"
-                      placeholder="请填写入职时间"
+                      placeholder="请填写入学时间"
                       format="yyyy">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="教师账号:" prop="count" >
+            <el-form-item label="所在班级:" prop="sex" >
+              <el-select v-model="ruleForm.cla" placeholder="请选择班级">
+                <el-option
+                        v-for="item in classes"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="学生账号:" prop="count" >
               <el-input v-model="ruleForm.count" placeholder="请填写账号" maxlength="20"/>
             </el-form-item>
           </div>
@@ -104,7 +114,7 @@
     <!-- 引入axios -->
     <script src="../../plugins/axios/axios.min.js"></script>
     <script src="../../js/request.js"></script>
-    <script src="../../api/teacher.js"></script>
+    <script src="../../api/student.js"></script>
     <script src="../../js/validate.js"></script>
     <script src="../../js/index.js"></script>
     <script>
@@ -119,15 +129,18 @@
               name:'',
               sex:'',
               birthday:'',
+              code:'',
               inTime:'',
-              count:''
+              count:'',
+              cla:''
             },
             options:[
               {
               label:'男', value:'1'
             },
               {label:'女',value:'0'}
-            ]
+            ],
+            classes:[],
 
           }
         },
@@ -136,7 +149,7 @@
             return {
               name: {
                 required: true,
-                message: '请输入教师姓名',
+                message: '请输入学生姓名',
                 trigger: 'blur',
               },
               sex:{
@@ -157,11 +170,13 @@
 
             }
           },
+
         },
         watch:{
 
         },
         created() {
+          this.getClass();
           this.id = requestUrlParam('id');
           this.actionType = this.id ? 'edit' : 'add'
           if (this.id) {
@@ -171,7 +186,7 @@
         mounted() {},
         methods: {
           async init() {
-            queryTeacherById(this.id).then((res) => {
+            queryStudentById(this.id).then((res) => {
               if (String(res.code) === '1') {
                this.ruleForm = res.data;
               } else {
@@ -179,13 +194,20 @@
               }
             })
           },
+          getClass(){
+            getClasses().then((res) => {
+              if(res.code === 1){
+                this.classes = JSON.parse(res.data)
+              }
+            })
+          },
 
           submitForm(formName, st) {
                 let prams = this.ruleForm
-                var strings = prams.inTime.split('-');
+                let strings = prams.inTime.split('-');
                 prams.inTime = strings;
                 if (this.actionType === 'add') {
-                  addTeacher(prams,prams.count)
+                  addStudent(prams,prams.count)
                     .then((res) => {
                       if (res.code === 1) {
                         this.$message.success('添加成功！')
@@ -209,7 +231,7 @@
                       this.$message.error('请求出错了：' + err)
                     })
                 } else {
-                  editTeacher(prams)
+                  editStudent(prams)
                     .then((res) => {
                       if (res.code === 1) {
                         this.$message.success('修改成功！')
@@ -237,9 +259,9 @@
           goBack() {
             window.parent.menuHandle(
               {
-                id: '3',
-                url: 'page/teacherManger/list.html',
-                name: '班级管理',
+                id: '2',
+                url: 'page/studentManger/list.html',
+                name: '学生管理',
               },
               false
             )
