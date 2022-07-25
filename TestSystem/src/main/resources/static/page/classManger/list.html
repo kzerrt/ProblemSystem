@@ -39,7 +39,7 @@
           <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;margin-top: 0px" />
         </el-button>
         </span>
-
+        <span v-if="id !== '1'">
         <div class="tableLab">
           <el-button
                type="text"
@@ -68,11 +68,12 @@
           <el-button
             type="primary"
             style="background: #8cc5ff"
-            @click="addClass('add')"
+            @click="add('add')"
           >
             + 新建班级
           </el-button>
         </div>
+          </span>
       </div>
       <el-table
         :data="tableData"
@@ -107,16 +108,17 @@
           </template>
         </el-table-column>
 
+
         <el-table-column
           label="操作"
           width="260"
           align="center"
         >
           <template slot-scope="scope">
-
+            <span v-if="id !== '1'">
             <el-button
                 type="text"
-                @click="addClass(scope.row.id)"
+                @click="add(scope.row.id)"
             >
               <img src="../../images/icons/edit.png" style="width: 20px;height: 20px" />
             </el-button>
@@ -139,9 +141,12 @@
             >
               <img src="../../images/icons/del.png" style="width: 20px;height: 20px" />
             </el-button>
+            </span>
           </template>
         </el-table-column>
+
       </el-table>
+
       <el-pagination
         class="pageList"
         :page-sizes="[10, 20, 30, 40]"
@@ -152,7 +157,10 @@
         :current-page.sync="page"
         @current-change="handleCurrentChange"
       ></el-pagination>
+
     </div>
+
+
   </div>
     <!-- 开发环境版本，包含了有帮助的命令行警告 -->
     <script src="../../plugins/vue/vue.js"></script>
@@ -187,6 +195,7 @@
            * 加载页面时进行初始化
            * */
           this.init()
+          this.id = requestUrlParam('id');
         },
         mounted() {
         },
@@ -217,7 +226,7 @@
             this.init();
           },
           // 添加
-          addClass (st) {
+          add (st) {
             if (st === 'add'){
               window.parent.menuHandle({
                 id: '1',

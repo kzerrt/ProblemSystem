@@ -1,6 +1,8 @@
 package com.florence.Service;
 
 import com.florence.pojo.Count;
+import com.florence.pojo.Students;
+import com.florence.pojo.Teacher;
 
 /**
  * @auther:Florence
@@ -14,4 +16,7 @@ public interface LoginService {
     Count login(Integer username);
 
     Count createCount(Integer username,Integer type);
+
+    Teacher getTeacher(Integer countId);
+    Students getStudent(Integer countId);
 }

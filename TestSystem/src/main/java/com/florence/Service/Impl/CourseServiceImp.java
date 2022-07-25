@@ -50,5 +50,15 @@ public class CourseServiceImp implements CourseService {
         courseMapper.status(status,ids);
     }
 
+    @Override
+    public void addMyCourse(Integer userId, Integer courseId) {
+        courseMapper.addMyCourse(userId,courseId);
+    }
+
+    @Override
+    public void addClass(Integer courseId, Integer classId, Integer userId) {
+        courseMapper.addClass(courseId, classId, userId);
+    }
+
 
 }

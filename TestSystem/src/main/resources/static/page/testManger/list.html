@@ -21,7 +21,7 @@
       <div class="tableBar">
         <el-input
           v-model="input"
-          placeholder="请输入姓名"
+          placeholder="请输入题目名称"
           style="width: 250px"
           clearable
           @keyup.enter.native="handleQuery"
@@ -37,7 +37,7 @@
           <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;margin-top: 0px;" />
         </el-button>
         </span>
-          <span v-if="id === 1">
+
         <div class="tableLab">
           <el-button
                type="text"
@@ -66,14 +66,12 @@
           <el-button
             type="primary"
             style="background: #8cc5ff"
-            @click="add('add')"
+            @click="addTeacher('add')"
             icon="el-icon-plus"
           >
-            添加学生
+            添加题目
           </el-button>
-
         </div>
-          </span>
       </div>
       <el-table
         :data="tableData"
@@ -88,51 +86,33 @@
         ></el-table-column>
         <el-table-column
                 prop="id"
-                width="120"
-                label="学生编号"
+                width="130"
+                label="题目编号"
         ></el-table-column>
         <el-table-column
           prop="name"
-          width="150"
-          label="学生姓名"
+          width="200"
+          label="名称"
         ></el-table-column>
         <el-table-column
-                prop="sex"
-                width="100"
-                label="学生性别"
+                prop="desc"
+                width="350"
+                label="题目描述"
         ></el-table-column>
         <el-table-column
-                prop="birthday"
-                width="100"
-                label="学生年龄"
-        ></el-table-column>
-        <el-table-column
-                prop="code"
+                prop="grade"
                 width="150"
-                label="学生学号"
+                label="分值"
         ></el-table-column>
         <el-table-column
-                prop="inTime"
-                width="130"
-                label="入学时间"
+                prop="type"
+                width="200"
+                label="题目类型"
         ></el-table-column>
-        <el-table-column
-                prop="cla"
-                width="150"
-                label="所在班级"
-        ></el-table-column>
-        <el-table-column
-                label="状态"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.status === '0' ? '停用' : '启用' }}</span>
-          </template>
-        </el-table-column>
 
-        <span v-if="id !== 1">
         <el-table-column
           label="操作"
-          width="180"
+          width="100"
           align="center"
         >
           <template slot-scope="scope">
@@ -145,18 +125,6 @@
             </el-button>
 
             <el-button
-              type="text"
-              @click="statusHandle(scope.row)"
-            >
-              <!--{{ scope.row.status === '0' ? '启用' : '停用' }}-->
-              <span v-if="scope.row.status === '0'">
-                <el-image src="../../images/icons/start.png"  style="width: 20px;height: 20px"></el-image>
-              </span>
-              <span v-else>
-                <el-image src="../../images/icons/stop.png"  style="width: 20px;height: 20px"></el-image>
-              </span>
-            </el-button>
-            <el-button
                type="text"
               @click="deleteHandle('单删', scope.row.id)"
             >
@@ -164,9 +132,7 @@
             </el-button>
           </template>
         </el-table-column>
-        </span>
       </el-table>
-
       <el-pagination
         class="pageList"
         :page-sizes="[10, 20, 30, 40]"
@@ -186,19 +152,17 @@
     <!-- 引入axios -->
     <script src="../../plugins/axios/axios.min.js"></script>
     <script src="../../js/request.js"></script>
-    <script src="../../api/student.js"></script>
+    <script src="../../api/test.js"></script>
     <script>
       new Vue({
         el: '#combo-app',
         data() {
           return {
-            id:'',
              input: '',
              counts: 0,
              page: 1,
              pageSize: 10,
              tableData : [],
-
           }
         },
         computed: {},
@@ -206,8 +170,7 @@
           /**
            * 加载页面时进行初始化
            * */
-          this.init();
-          this.id = requestUrlParam('id');
+          this.init()
         },
         mounted() {
         },
@@ -218,7 +181,7 @@
               pageSize: this.pageSize,
               name: this.input ? this.input : undefined
             }
-            await getStudentPage(params).then(res => {
+            await getTestPage(params).then(res => {
               if (String(res.code) === '1') {
                 this.tableData = res.data.list || []
                 this.counts = res.data.total
@@ -238,15 +201,15 @@
           add(st) {
             if (st === 'add'){
               window.parent.menuHandle({
-                id: '2',
-                url: 'page/studentManger/add.html',
-                name: '添加学生'
+                id: '4',
+                url: 'page/testManger/add.html',
+                name: '添加题目'
               },true)
             } else {
               window.parent.menuHandle({
-                id: '2',
-                url: 'page/studentManger/add.html?id='+st,
-                name: '修改学生信息'
+                id: '3',
+                url: 'page/testManger/add.html?id='+st,
+                name: '修改题目信息'
               },true)
             }
           },
@@ -258,11 +221,11 @@
                 return this.$message.error('请选择删除对象')
               }
             }
-            this.$confirm('确定删除该学生, 是否继续?', '确定删除', {
+            this.$confirm('确定删除该教师, 是否继续?', '确定删除', {
               'confirmButtonText': '确定',
               'cancelButtonText': '取消',
             }).then(() => {
-              deleteStudent(type === '批量' ? this.checkList.join(',') : id).then(res => {
+              deleteTest(type === '批量' ? this.checkList.join(',') : id).then(res => {
                 if (res.code === 1) {
                   if(res.data === 'success')
                     this.$message.success('删除成功！');
@@ -278,38 +241,6 @@
             })
           },
 
-          //状态更改
-          statusHandle (row) {
-            let params = {}
-            if (typeof row === 'string' ){
-              if (this.checkList.length == 0){
-                this.$message.error('批量操作，请先勾选操作！')
-                return false
-              }
-              params.ids = this.checkList.join(',')
-              params.status = row
-            } else {
-              params.ids = row.id
-              params.status = row.status ? '0' : '1'
-            }
-            this.$confirm('确认更改该学生状态?', '提示', {
-              'confirmButtonText': '确定',
-              'cancelButtonText': '取消',
-              'type': 'warning'
-            }).then(() => {
-              // 起售停售---批量起售停售接口
-             StudentStatusByStatus(params).then(res => {
-                if (res.code === 1) {
-                  this.$message.success('学生状态已经更改成功！')
-                  this.handleQuery()
-                } else {
-                  this.$message.error(res.msg || '操作失败')
-                }
-              }).catch(err => {
-                  this.$message.error('请求出错了：' + err)
-              })
-            })
-          },
 
           // 全部操作
           handleSelectionChange (val){

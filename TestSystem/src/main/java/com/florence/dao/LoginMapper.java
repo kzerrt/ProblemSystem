@@ -1,6 +1,8 @@
 package com.florence.dao;
 
 import com.florence.pojo.Count;
+import com.florence.pojo.Students;
+import com.florence.pojo.Teacher;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -16,4 +18,10 @@ public interface LoginMapper {
     Count login(Integer username);
 
     Count createCount(Integer username,Integer type);
+
+    @Select("select * from teacher where count_id = #{countId};")
+    Teacher getTeacher(Integer countId);
+
+    @Select("select * from student where count_id = #{countId};")
+    Students getStudent(Integer countId);
 }

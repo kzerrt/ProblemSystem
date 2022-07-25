@@ -29,4 +29,9 @@ public interface CourseMapper {
 
     void status(Integer status,Integer[] ids);
 
+    @Insert("insert into tea_cou_clatable value (#{userId},#{courseId},0);")
+    void addMyCourse(Integer userId,Integer courseId);
+
+    @Insert("insert into tea_cou_clatable value (#{userId},#{courseId},#{classId});")
+    void addClass(Integer courseId,Integer classId,Integer userId);
 }

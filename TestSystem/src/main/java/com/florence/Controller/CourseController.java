@@ -27,8 +27,6 @@ public class CourseController {
     @PostMapping("/add")
     public R<String> add(String name){
 
-        System.out.println(name);
-
         courseService.addCourse(name);
         return R.success("success");
     }
@@ -51,4 +49,15 @@ public class CourseController {
         return R.success("success");
     }
 
+    @PostMapping("/addCourse/#{id}")
+    public R<String> addCourse(@PathVariable Integer id,Integer username){
+        courseService.addMyCourse(username,id);
+        return R.success("success");
+    }
+
+    @PostMapping("/addClass")
+    public R<String> addClass(Integer courseId,Integer classId,Integer userId){
+        courseService.addClass(courseId,classId,userId);
+        return R.success("success");
+    }
 }

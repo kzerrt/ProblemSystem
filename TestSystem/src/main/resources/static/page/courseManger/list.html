@@ -49,6 +49,7 @@
             批量删除&nbsp&nbsp&nbsp
           </el-button>
 
+            <span v-if="id === '0'">
           <el-button
                   type="text"
                   size="small"
@@ -63,7 +64,7 @@
                   style="color: #f56c6c"
                   @click="statusHandle('0')"
           >批量停用</el-button>
-
+            </span>
           <el-button
                   type="primary"
                   style="background: #8cc5ff"
@@ -115,6 +116,8 @@
           </template>
         </el-table-column>
 
+
+
         <el-table-column
           label="操作"
           width="260"
@@ -122,6 +125,7 @@
         >
           <template slot-scope="scope">
 
+            <span v-if="id ==='0'">
             <el-popover
                     placement="right"
                     width="300"
@@ -155,6 +159,23 @@
                 <el-image src="../../images/icons/stop.png"  style="width: 20px;height: 20px"></el-image>
               </span>
             </el-button>
+            </span>
+
+            <span v-else>
+              <el-button
+                      type="text"
+                      @click="addMyCourse(scope.row.id)"
+              >
+              <img src="../../images/icons/xiangmujine@2x.png" style="width: 20px;height: 20px" />
+            </el-button>
+              <el-button
+                      type="text"
+                      @click="show(scope.row.id)"
+              >
+              <img src="../../images/icons/class.png" style="width: 20px;height: 20px" />
+            </el-button>
+            </span>
+
             <el-button
                type="text"
               @click="deleteHandle('单删', scope.row.id)"
@@ -179,7 +200,27 @@
 
     </div>
 
+     <el-dialog title="添加班级" :visible.sync="dialogForm">
+       <el-form :model="classId">
+         <el-form-item label="班级" :label-width="120">
+           <el-select v-model="classes" placeholder="请选择要添加的班级">
+             <el-option
+                     v-for="item in classes"
+                     :key="item.id"
+                     :label="item.name"
+                     :value="item.id">
+             </el-option>
+           </el-select>
+         </el-form-item>
+       </el-form>
+       <div slot="footer" class="dialog-footer">
+         <el-button @click="dialogForm = false">取 消</el-button>
+         <el-button type="primary" @click="addClassByTeacher()">确 定</el-button>
+       </div>
+     </el-dialog>
   </div>
+
+
     <!-- 开发环境版本，包含了有帮助的命令行警告 -->
     <script src="../../plugins/vue/vue.js"></script>
     <!-- 引入组件库 -->
@@ -188,15 +229,17 @@
     <script src="../../plugins/axios/axios.min.js"></script>
     <script src="../../js/request.js"></script>
     <script src="../../api/course.js"></script>
+    <script src="../../api/student.js"></script>
     <script>
       new Vue({
         el: '#combo-app',
         data() {
           return {
-             input: '',
-             counts: 0,
-             page: 1,
-             pageSize: 10,
+            id:'',
+            input: '',
+            counts: 0,
+            page: 1,
+            pageSize: 10,
             courseName:'',
             editName:'',
              tableData : [
@@ -207,6 +250,10 @@
                }
              ],
             dialogFormVisible : false,
+            dialogForm : false,
+            classes:[],
+            classId:'',
+            courseId:'',
           }
         },
         computed: {},
@@ -214,7 +261,8 @@
           /**
            * 加载页面时进行初始化
            * */
-          this.init()
+          this.init();
+          this.id = requestUrlParam('id');
         },
         mounted() {
         },
@@ -234,6 +282,24 @@
               this.$message.error('请求出错了：' + err)
             })
           },
+          show(id){
+            this.courseId = id;
+            this.dialogForm = true;
+          },
+          addClassByTeacher(){
+            this.dialogForm = false;
+            let item = window.sessionStorage.getItem("teacher");
+            addClassByTeacher(this.courseId,this.classId,item.id).then(res =>{
+
+            })
+          },
+          getClass(){
+            getClasses().then((res) => {
+              if(res.code === 1){
+                this.classes = res.data.map((obj) =>({ ...obj,cla : obj.id}))
+              }
+            })
+          },
           /**
            * 页面初始页码
            * */
@@ -241,6 +307,19 @@
             this.page = 1;
             this.init();
           },
+          addMyCourse(id){
+            let item = window.sessionStorage.getItem("teacher");
+            addCourseByTeacher(item.id,id).then(res =>{
+              if(res.code === '1'){
+                this.$message.success('添加成功！');
+              }else{
+                this.$message.error("添加失败")
+              }
+            }).catch(err => {
+              this.$message.error('请求出错了：' + err)
+            })
+          }
+          ,
           // 添加
           add(st) {
             if (st === 'add'){

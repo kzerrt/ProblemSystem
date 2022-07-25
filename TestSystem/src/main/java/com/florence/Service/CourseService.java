@@ -20,4 +20,8 @@ public interface CourseService {
     void deleteByIds(Integer[] ids);
 
     void status(Integer status,Integer[] ids);
+
+    void addMyCourse(Integer userId,Integer courseId);
+
+    void addClass(Integer courseId,Integer classId,Integer userId);
 }

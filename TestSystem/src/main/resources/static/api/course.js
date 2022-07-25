@@ -50,3 +50,24 @@ const CourseStatusByStatus = (params) => {
     params: { ids: params.ids }
   })
 }
+
+//教师添加课程
+const addCourseByTeacher = (username,id) =>{
+  return $axios({
+    url:'/course/addCourse?id=' + id,
+    method:'post',
+    username : username
+  })
+}
+addClassByTeacher= (courseId,classId,userId) =>{
+  return $axios({
+    url:'/course/addClass',
+    method:'post',
+    data:{
+      courseId : courseId,
+      classId:classId,
+      userId:userId
+    }
+
+  })
+}

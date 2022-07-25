@@ -4,11 +4,15 @@ import com.florence.Service.LoginService;
 import com.florence.common.BaseContext;
 import com.florence.common.R;
 import com.florence.pojo.Count;
+import com.florence.pojo.Students;
+import com.florence.pojo.Teacher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * @auther:Florence
@@ -29,7 +33,7 @@ public class CountController {
      * 将用户输入的信息判断，是否可以登录
      */
     @PostMapping("/login")
-    public R<Count> Login(@RequestBody Count count, boolean remember, HttpServletResponse response) {
+    public R<Count> Login(@RequestBody Count count, boolean remember, HttpServletResponse response, HttpServletRequest request) {
         //log.info(count.toString() + "   " + remember);
         //获取用户填写的信息
 
@@ -49,8 +53,16 @@ public class CountController {
                 response.addCookie(username);
                 response.addCookie(password);
             }
-            BaseContext.setCurrentId(login.getUsername());
-
+           // BaseContext.setCurrentId(login.getUsername());
+            if(login.getType() != 0){
+                if(login.getType() == 1){
+                    Teacher teacher = loginService.getTeacher(login.getId());
+                     request.getSession().setAttribute("teacher" ,teacher);
+                }else{
+                    Students student = loginService.getStudent(login.getId());
+                    request.getSession().setAttribute("student",student);
+                }
+            }
             return R.success(login);
         } else {
             return R.error("账户密码错误!!");
