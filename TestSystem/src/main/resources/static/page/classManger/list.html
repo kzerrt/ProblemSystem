@@ -26,26 +26,25 @@
           placeholder="请输入班级名称"
           style="width: 250px"
           clearable
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="handleQueryClass"
         >
         </el-input>
 
         <span v-if ="input !== ''" style="height: 40px">
         <el-button
                 type="text"
-                style="margin-right: 650px"
-                @click="init"
+                style="margin-right: 560px;"
+                @click="initClass"
         >
           <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;margin-top: 0px" />
         </el-button>
         </span>
-        <span v-if="id !== '1'">
         <div class="tableLab">
           <el-button
                type="text"
                size="small"
               style="color: #fdd24c;border-right: solid 1px #d8dde3;"
-              @click="deleteHandle('批量')"
+              @click="deleteHandleClass('批量')"
           >
             批量删除&nbsp&nbsp&nbsp
           </el-button>
@@ -54,7 +53,7 @@
                   type="text"
                   size="small"
                   style="color: #85ce61;border-right: solid 1px #d8dde3;"
-                  @click="deleteHandle('1')"
+                  @click="deleteHandleClass('1')"
           >
             批量启用&nbsp&nbsp&nbsp
           </el-button>
@@ -62,18 +61,17 @@
           <el-button
             type="text"
             style="color: #f56c6c"
-            @click="statusHandle('0')"
+            @click="statusHandleClass('0')"
           >批量停用</el-button>
 
           <el-button
             type="primary"
             style="background: #8cc5ff"
-            @click="add('add')"
+            @click="addCla('add')"
           >
             + 新建班级
           </el-button>
         </div>
-          </span>
       </div>
       <el-table
         :data="tableData"
@@ -118,14 +116,14 @@
             <span v-if="id !== '1'">
             <el-button
                 type="text"
-                @click="add(scope.row.id)"
+                @click="addCla(scope.row.id)"
             >
               <img src="../../images/icons/edit.png" style="width: 20px;height: 20px" />
             </el-button>
 
             <el-button
               type="text"
-              @click="statusHandle(scope.row)"
+              @click="statusHandleClass(scope.row)"
             >
               <!--{{ scope.row.status === '0' ? '启用' : '停用' }}-->
               <span v-if="scope.row.status === '0'">
@@ -137,7 +135,7 @@
             </el-button>
             <el-button
                type="text"
-              @click="deleteHandle('单删', scope.row.id)"
+              @click="deleteHandleClass('单删', scope.row.id)"
             >
               <img src="../../images/icons/del.png" style="width: 20px;height: 20px" />
             </el-button>
@@ -194,13 +192,13 @@
           /**
            * 加载页面时进行初始化
            * */
-          this.init()
+          this.initClass()
           this.id = requestUrlParam('id');
         },
         mounted() {
         },
         methods: {
-          async init () {
+          async initClass () {
             const params = {
               page: this.page,
               pageSize: this.pageSize,
@@ -221,12 +219,12 @@
           /**
            * 页面初始页码
            * */
-          handleQuery() {
+          handleQueryClass() {
             this.page = 1;
-            this.init();
+            this.initClass();
           },
           // 添加
-          add (st) {
+          addCla (st) {
             if (st === 'add'){
               window.parent.menuHandle({
                 id: '1',
@@ -243,7 +241,7 @@
           },
 
           // 删除
-          deleteHandle (type, id) {
+          deleteHandleClass (type, id) {
             if (type === '批量' && id === null) {
               if (this.checkList.length === 0) {
                 return this.$message.error('请选择删除对象')
@@ -259,7 +257,7 @@
                     this.$message.success('删除成功！');
                   else
                     this.$message.error(res.data);
-                  this.handleQuery()
+                  this.handleQueryClass()
                 } else {
                   this.$message.error(res.msg || '操作失败')
                 }
@@ -270,7 +268,7 @@
           },
 
           //状态更改
-          statusHandle (row) {
+          statusHandleClass (row) {
             let params = {}
             if (typeof row === 'string' ){
               if (this.checkList.length == 0){
@@ -292,7 +290,7 @@
               ClassStatusByStatus(params).then(res => {
                 if (res.code === 1) {
                   this.$message.success('班级状态已经更改成功！')
-                  this.handleQuery()
+                  this.handleQueryClass()
                 } else {
                   this.$message.error(res.msg || '操作失败')
                 }
@@ -312,11 +310,11 @@
           },
           handleSizeChange (val) {
             this.pageSize = val
-            this.init()
+            this.initClass()
           },
           handleCurrentChange (val) {
             this.page = val
-            this.init()
+            this.initClass()
           }
         }
       })

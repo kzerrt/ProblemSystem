@@ -7,21 +7,21 @@
 
 
     <select id="getPage" resultType="com.florence.pojo.Problem">
-        select p.id id , p.name name,p.desc 'desc',grade, c.name type,tea_id from problem  p join category c on p.type = c.id
+        select p.id as id , p.name as name,p.desc as 'desc',grade, c.name as type,tea_id as teaId from problem  p join category c on p.type = c.id
         <if test="name != null and name != ''">
         where name like #{name}
         </if>
         limit #{page} , #{pageSize};
     </select>
     <select id="getTotal" resultType="java.lang.Integer">
-        select count(name) total from course
+        select count(name) total from problem
         <if test="name != null and name != ''">
             where name like #{name}
         </if>
     </select>
 
     <delete id="deleteByIds">
-        delete from course
+        delete from problem
         <where>
             id in
             <foreach collection="ids" item="id" separator="," open="(" close=")">

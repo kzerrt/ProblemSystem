@@ -24,7 +24,7 @@
           placeholder="请输入课程名称"
           style="width: 250px"
           clearable
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="handleQueryCourse"
         >
         </el-input>
 
@@ -32,7 +32,7 @@
         <el-button
                 type="text"
                 style="margin-right: 560px"
-                @click="init"
+                @click="initCourse"
         >
           <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;" />
         </el-button>
@@ -44,7 +44,7 @@
                   type="text"
                   size="small"
                   style="color: #fdd24c;border-right: solid 1px #d8dde3;"
-                  @click="deleteHandle('批量')"
+                  @click="deleteHandleCourse('批量')"
           >
             批量删除&nbsp&nbsp&nbsp
           </el-button>
@@ -54,7 +54,7 @@
                   type="text"
                   size="small"
                   style="color: #85ce61;border-right: solid 1px #d8dde3;"
-                  @click="deleteHandle('1')"
+                  @click="deleteHandleCourse('1')"
           >
             批量启用&nbsp&nbsp&nbsp
           </el-button>
@@ -62,13 +62,13 @@
           <el-button
                   type="text"
                   style="color: #f56c6c"
-                  @click="statusHandle('0')"
+                  @click="statusHandleCourse('0')"
           >批量停用</el-button>
             </span>
           <el-button
                   type="primary"
                   style="background: #8cc5ff"
-                  @click="add('add')"
+                  @click="addCou('add')"
                   icon="el-icon-plus"
           >
             添加课程
@@ -82,7 +82,7 @@
                      clearable
              >
           </el-input>
-          <el-button type="success" icon="el-icon-check" circle @click="add('submit')"></el-button>
+          <el-button type="success" icon="el-icon-check" circle @click="addCou('submit')"></el-button>
             <el-button type="danger" icon="el-icon-close" circle @click="close()"></el-button>
           </span>
         </div>
@@ -138,18 +138,18 @@
                       clearable
               >
               </el-input>
-              <el-button type="success" icon="el-icon-check" circle @click="edit(scope.row.id,editName,false)"></el-button>
+              <el-button type="success" icon="el-icon-check" circle @click="editCourse(scope.row.id,editName,false)"></el-button>
               <el-button
                       slot="reference"
                       type="text"
-                      @click="edit(scope.row.id,scope.row.name,true)"
+                      @click="editCourse(scope.row.id,scope.row.name,true)"
               >
                 <img src="../../images/icons/edit.png" style="width: 20px;height: 20px"/>
               </el-button>
             </el-popover>
             <el-button
               type="text"
-              @click="statusHandle(scope.row)"
+              @click="statusHandleCourse(scope.row)"
             >
               <!--{{ scope.row.status === '0' ? '启用' : '停用' }}-->
               <span v-if="scope.row.status === '0'">
@@ -178,7 +178,7 @@
 
             <el-button
                type="text"
-              @click="deleteHandle('单删', scope.row.id)"
+              @click="deleteHandleCourse('单删', scope.row.id)"
             >
               <img src="../../images/icons/del.png" style="width: 20px;height: 20px" />
             </el-button>
@@ -261,13 +261,13 @@
           /**
            * 加载页面时进行初始化
            * */
-          this.init();
+          this.initCourse();
           this.id = requestUrlParam('id');
         },
         mounted() {
         },
         methods: {
-          async init () {
+          async initCourse () {
             const params = {
               page: this.page,
               pageSize: this.pageSize,
@@ -296,16 +296,16 @@
           getClass(){
             getClasses().then((res) => {
               if(res.code === 1){
-                this.classes = res.data.map((obj) =>({ ...obj,cla : obj.id}))
+                this.classes = res.data.map((obj) =>({ ...obj,id : obj.name}))
               }
             })
           },
           /**
            * 页面初始页码
            * */
-          handleQuery() {
+          handleQueryCourse() {
             this.page = 1;
-            this.init();
+            this.initCourse();
           },
           addMyCourse(id){
             let item = window.sessionStorage.getItem("teacher");
@@ -321,16 +321,17 @@
           }
           ,
           // 添加
-          add(st) {
+          addCou(st) {
             if (st === 'add'){
               this.dialogFormVisible = true;
             }else{
               if(this.courseName === ''){
                 this.$message.error('请输入课程名');
               }else{
+                alert(this.courseName);
                 addCourse(this.courseName).then(res =>{
                   if(res.code === 1){
-                    this.init()
+                    this.initCourse()
                     this.courseName = '';
                     this.dialogFormVisible = false;
                   }else{
@@ -342,7 +343,7 @@
               }
             }
           },
-          edit(code,value,flag){
+          editCourse(code,value,flag){
             if(flag)
                 this.editName = value;
             else{
@@ -353,7 +354,7 @@
                 editCourse(pram).then(res=>{
                   if(res.code === 1){
 
-                    this.init();
+                    this.initCourse();
                   }else{
                     this.$message.error(res.msg || '操作失败')
                   }
@@ -362,7 +363,7 @@
           },
 
           // 删除
-          deleteHandle (type, id) {
+          deleteHandleCourse (type, id) {
             if (type === '批量' && id === null) {
               if (this.checkList.length === 0) {
                 return this.$message.error('请选择删除对象')
@@ -378,7 +379,7 @@
                     this.$message.success('删除成功！');
                   else
                     this.$message.error(res.data);
-                  this.handleQuery()
+                  this.handleQueryCourse()
                 } else {
                   this.$message.error(res.msg || '操作失败')
                 }
@@ -389,10 +390,10 @@
           },
 
           //状态更改
-          statusHandle (row) {
+          statusHandleCourse (row) {
             let params = {}
             if (typeof row === 'string' ){
-              if (this.checkList.length == 0){
+              if (this.checkList.length === 0){
                 this.$message.error('批量操作，请先勾选操作！')
                 return false
               }
@@ -410,7 +411,7 @@
              CourseStatusByStatus(params).then(res => {
                 if (res.code === 1) {
                   this.$message.success('状态已经更改成功！')
-                  this.handleQuery()
+                  this.handleQueryCourse()
                 } else {
                   this.$message.error(res.msg || '操作失败')
                 }
@@ -433,11 +434,11 @@
           },
           handleSizeChange (val) {
             this.pageSize = val
-            this.init()
+            this.initCourse()
           },
           handleCurrentChange (val) {
             this.page = val
-            this.init()
+            this.initCourse()
           }
         }
       })

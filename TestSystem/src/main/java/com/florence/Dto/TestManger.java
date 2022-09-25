@@ -6,11 +6,12 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @auther:Florence
- * @date:2022/07/25/16:01
+ * @author Florence
+ * TODO: 2022/09/13
  */
+
 @Data
-public class ProblemManger {
+public class TestManger {
 
     private List<Problem> list;
 

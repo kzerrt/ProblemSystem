@@ -125,11 +125,9 @@
                 this.loading = true
                 let res = await loginApi(this.loginForm, this.remember)
                 if (String(res.code) === '1') {
-                    window.localStorage.setItem('username',res.data.username);
-                    window.localStorage.setItem('type',res.data.type);
-
-                    //window.alert(JSON.stringify(res.data))
-                    //window.localStorage.setItem('userInfo',res.data);
+                    window.localStorage.setItem('username',res.data.counts.username);
+                    window.localStorage.setItem('type',res.data.counts.type);
+                    window.localStorage.setItem('info',res.data.type);
                     window.location.href = '/index.html';
                 } else {
                     this.$message.error(res.msg)

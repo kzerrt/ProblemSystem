@@ -26,11 +26,10 @@ const editCourse = (params) => {
 }
 
 // 新增数据接口
-const addCourse = (params) => {
+const addCourse = (param) => {
   return $axios({
-    url: '/course/add',
+    url: '/course/add/'+ param,
     method: 'post',
-    data: { ...params }
   })
 }
 

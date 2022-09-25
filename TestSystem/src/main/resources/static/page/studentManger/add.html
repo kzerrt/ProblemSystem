@@ -7,7 +7,6 @@
     <title>Document</title>
     <!-- 引入样式 -->
     <link rel="stylesheet" href="../../plugins/element-ui/index.css" />
-    <!--<link rel="stylesheet" href="../../styles/common.css" />-->
     <link rel="stylesheet" href="../../styles/page.css" />
     <style>
       .el-button--primary {
@@ -91,13 +90,13 @@
             <el-form-item
               label-width="400px"
             >
-              <el-button @click="goBack()"> 取消 </el-button>
-              <el-button type="primary" @click="submitForm('ruleForm', false)"> 保存 </el-button>
+              <el-button @click="goBackaddPageStudent()"> 取消 </el-button>
+              <el-button type="primary" @click="submitFormaddPageStudent('ruleForm', false)"> 保存 </el-button>
               <el-button
                 v-if="actionType == 'add'"
                 type="primary"
                 class="continue"
-                @click="submitForm('ruleForm', true)"
+                @click="submitFormaddPageStudent('ruleForm', true)"
               >
                 保存并继续添加
               </el-button>
@@ -176,16 +175,16 @@
 
         },
         created() {
-          this.getClass();
+          this.getClassaddPageStudent();
           this.id = requestUrlParam('id');
           this.actionType = this.id ? 'edit' : 'add'
           if (this.id) {
-            this.init()
+            this.initaddPageStudent()
           }
         },
         mounted() {},
         methods: {
-          async init() {
+          async initaddPageStudent() {
             queryStudentById(this.id).then((res) => {
               if (String(res.code) === '1') {
                this.ruleForm = res.data;
@@ -194,7 +193,7 @@
               }
             })
           },
-          getClass(){
+          getClassaddPageStudent(){
             getClasses().then((res) => {
               if(res.code === 1){
                 this.classes = res.data.map((obj) =>({ ...obj,cla : obj.id}))
@@ -202,7 +201,7 @@
             })
           },
 
-          submitForm(formName, st) {
+          submitFormaddPageStudent(formName, st) {
                 let prams = this.ruleForm
                 let strings = prams.inTime.split('-');
                 prams.inTime = strings[0];
@@ -256,7 +255,7 @@
             }
           },
 
-          goBack() {
+          goBackaddPageStudent() {
             window.parent.menuHandle(
               {
                 id: '2',

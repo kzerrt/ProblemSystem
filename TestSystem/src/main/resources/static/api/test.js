@@ -26,11 +26,11 @@ const editTest = (params) => {
 }
 
 // 新增数据接口
-const addTest = (params,count) => {
+const addTest = (params) => {
   return $axios({
-    url: '/test/add/'+ count,
+    url: '/test/add',
     method: 'post',
-    data: { ...params }
+    data: { params }
   })
 }
 

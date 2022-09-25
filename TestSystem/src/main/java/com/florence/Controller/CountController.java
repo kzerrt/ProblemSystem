@@ -1,5 +1,7 @@
 package com.florence.Controller;
 
+import com.alibaba.fastjson.JSON;
+import com.florence.Dto.LoginDto;
 import com.florence.Service.LoginService;
 import com.florence.common.BaseContext;
 import com.florence.common.R;
@@ -33,16 +35,17 @@ public class CountController {
      * 将用户输入的信息判断，是否可以登录
      */
     @PostMapping("/login")
-    public R<Count> Login(@RequestBody Count count, boolean remember, HttpServletResponse response, HttpServletRequest request) {
+    public R<LoginDto> Login(@RequestBody Count count, boolean remember, HttpServletResponse response, HttpServletRequest request) {
         //log.info(count.toString() + "   " + remember);
         //获取用户填写的信息
 
         //从数据库中获取该账号信息
 
         Count login = null;
+        LoginDto loginDto = new LoginDto();
         login = loginService.login(count.getUsername());
 
-
+        assert login != null;
         if (count.getPassword().equals(login.getPassword())) {
             if (remember) {
                 Cookie username = new Cookie("username", login.getUsername().toString());
@@ -57,13 +60,15 @@ public class CountController {
             if(login.getType() != 0){
                 if(login.getType() == 1){
                     Teacher teacher = loginService.getTeacher(login.getId());
-                     request.getSession().setAttribute("teacher" ,teacher);
+                    loginDto.setType(JSON.toJSONString(teacher));
                 }else{
                     Students student = loginService.getStudent(login.getId());
-                    request.getSession().setAttribute("student",student);
+                    assert student != null;
+                    loginDto.setType(JSON.toJSONString(student));
                 }
             }
-            return R.success(login);
+            loginDto.setCounts(login);
+            return R.success(loginDto);
         } else {
             return R.error("账户密码错误!!");
         }

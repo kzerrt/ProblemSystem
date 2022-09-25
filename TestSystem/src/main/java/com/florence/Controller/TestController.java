@@ -2,6 +2,7 @@ package com.florence.Controller;
 
 import com.florence.Dto.ProblemManger;
 import com.florence.Service.TestService;
+import com.florence.common.BaseContext;
 import com.florence.common.R;
 import com.florence.pojo.Category;
 import com.florence.pojo.Problem;
@@ -11,19 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @auther:Florence
+ * @auther :Florence
  * @date:2022/07/25/15:57
  */
 @RestController
-@RequestMapping("test")
+@RequestMapping("/test")
 public class TestController {
 
     @Autowired
     private TestService testService;
 
-    @GetMapping("page")
+    @GetMapping("/page")
     public R<ProblemManger> getPage(Integer page,Integer pageSize,String name){
-        ProblemManger page1 = testService.getPage(page, pageSize, name);
+        ProblemManger page1 = testService.getPage(page - 1, pageSize, name);
         return R.success(page1);
     }
 
@@ -39,9 +40,9 @@ public class TestController {
         return R.success(category);
     }
 
-    @GetMapping("/add/{id}")
-    public R<String> add(@PathVariable Integer id, @RequestBody Problem problem){
-        problem.setTeaId(id);
+    @PostMapping("/add")
+    public R<String> add(@RequestBody Problem problem){
+        problem.setTeaId(BaseContext.getCurrentId().intValue());
         testService.addProblem(problem);
         return R.success("success");
     }

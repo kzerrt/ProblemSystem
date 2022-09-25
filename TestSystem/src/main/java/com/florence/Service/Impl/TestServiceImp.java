@@ -27,7 +27,9 @@ public class TestServiceImp implements TestService {
         ProblemManger t = new ProblemManger();
         t.setTotal(total);
         t.setList(page1);
-        return null;
+
+        System.out.println(t.toString());
+        return t;
     }
 
     @Override

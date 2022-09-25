@@ -24,7 +24,7 @@
           placeholder="请输入题目名称"
           style="width: 250px"
           clearable
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="handleQueryTest"
         >
         </el-input>
 
@@ -32,7 +32,7 @@
         <el-button
                 type="text"
                 style="margin-right: 560px"
-                @click="init"
+                @click="initTest"
         >
           <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;margin-top: 0px;" />
         </el-button>
@@ -43,7 +43,7 @@
                type="text"
                size="small"
               style="color: #fdd24c;border-right: solid 1px #d8dde3;"
-              @click="deleteHandle('批量')"
+              @click="deleteHandleTest('批量')"
           >
             批量删除&nbsp&nbsp&nbsp
           </el-button>
@@ -52,7 +52,7 @@
                   type="text"
                   size="small"
                   style="color: #85ce61;border-right: solid 1px #d8dde3;"
-                  @click="deleteHandle('1')"
+                  @click="deleteHandleTest('1')"
           >
             批量启用&nbsp&nbsp&nbsp
           </el-button>
@@ -60,13 +60,13 @@
           <el-button
             type="text"
             style="color: #f56c6c"
-            @click="statusHandle('0')"
+            @click="statusHandleTest('0')"
           >批量停用</el-button>
 
           <el-button
             type="primary"
             style="background: #8cc5ff"
-            @click="addTeacher('add')"
+            @click="addTest('add')"
             icon="el-icon-plus"
           >
             添加题目
@@ -119,14 +119,14 @@
 
             <el-button
                 type="text"
-                @click="add(scope.row.id)"
+                @click="addTest(scope.row.id)"
             >
               <img src="../../images/icons/edit.png" style="width: 20px;height: 20px" />
             </el-button>
 
             <el-button
                type="text"
-              @click="deleteHandle('单删', scope.row.id)"
+              @click="deleteHandleTest('单删', scope.row.id)"
             >
               <img src="../../images/icons/del.png" style="width: 20px;height: 20px" />
             </el-button>
@@ -170,12 +170,13 @@
           /**
            * 加载页面时进行初始化
            * */
-          this.init()
+          this.initTest()
         },
         mounted() {
+
         },
         methods: {
-          async init () {
+          async initTest () {
             const params = {
               page: this.page,
               pageSize: this.pageSize,
@@ -183,22 +184,24 @@
             }
             await getTestPage(params).then(res => {
               if (String(res.code) === '1') {
+                //alert(res.data)
                 this.tableData = res.data.list || []
                 this.counts = res.data.total
               }
-            }).catch(err => {
+            }).catch(err => {  //
               this.$message.error('请求出错了：' + err)
             })
           },
           /**
            * 页面初始页码
            * */
-          handleQuery() {
+
+          handleQueryTest() {
             this.page = 1;
-            this.init();
+            this.initTest();
           },
           // 添加
-          add(st) {
+          addTest(st) {
             if (st === 'add'){
               window.parent.menuHandle({
                 id: '4',
@@ -207,7 +210,7 @@
               },true)
             } else {
               window.parent.menuHandle({
-                id: '3',
+                id: '4',
                 url: 'page/testManger/add.html?id='+st,
                 name: '修改题目信息'
               },true)
@@ -215,13 +218,13 @@
           },
 
           // 删除
-          deleteHandle (type, id) {
+          deleteHandleTest (type, id) {
             if (type === '批量' && id === null) {
               if (this.checkList.length === 0) {
                 return this.$message.error('请选择删除对象')
               }
             }
-            this.$confirm('确定删除该教师, 是否继续?', '确定删除', {
+            this.$confirm('确定删除该题目, 是否继续?', '确定删除', {
               'confirmButtonText': '确定',
               'cancelButtonText': '取消',
             }).then(() => {
@@ -231,7 +234,7 @@
                     this.$message.success('删除成功！');
                   else
                     this.$message.error(res.data);
-                  this.handleQuery()
+                  this.handleQueryTest()
                 } else {
                   this.$message.error(res.msg || '操作失败')
                 }
@@ -252,11 +255,11 @@
           },
           handleSizeChange (val) {
             this.pageSize = val
-            this.init()
+            this.initTest()
           },
           handleCurrentChange (val) {
             this.page = val
-            this.init()
+            this.initTest()
           }
         }
       })

@@ -24,7 +24,7 @@
           placeholder="请输入姓名"
           style="width: 250px"
           clearable
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="handleQueryTeacher"
         >
         </el-input>
 
@@ -32,7 +32,7 @@
         <el-button
                 type="text"
                 style="margin-right: 560px"
-                @click="init"
+                @click="initTeacher"
         >
           <img src="../../images/icons/sreach.png" style="width: 20px;height: 20px;margin-top: 0px;" />
         </el-button>
@@ -43,7 +43,7 @@
                type="text"
                size="small"
               style="color: #fdd24c;border-right: solid 1px #d8dde3;"
-              @click="deleteHandle('批量')"
+              @click="deleteHandleTeacher('批量')"
           >
             批量删除&nbsp&nbsp&nbsp
           </el-button>
@@ -52,7 +52,7 @@
                   type="text"
                   size="small"
                   style="color: #85ce61;border-right: solid 1px #d8dde3;"
-                  @click="deleteHandle('1')"
+                  @click="deleteHandleTeacher('1')"
           >
             批量启用&nbsp&nbsp&nbsp
           </el-button>
@@ -66,7 +66,7 @@
           <el-button
             type="primary"
             style="background: #8cc5ff"
-            @click="addTeacher('add')"
+            @click="addTeachers('add')"
             icon="el-icon-plus"
           >
             添加教师
@@ -124,14 +124,14 @@
 
             <el-button
                 type="text"
-                @click="add(scope.row.id)"
+                @click="addTeachers(scope.row.id)"
             >
               <img src="../../images/icons/edit.png" style="width: 20px;height: 20px" />
             </el-button>
 
             <el-button
               type="text"
-              @click="statusHandle(scope.row)"
+              @click="statusHandleTeacher(scope.row)"
             >
               <!--{{ scope.row.status === '0' ? '启用' : '停用' }}-->
               <span v-if="scope.row.status === '0'">
@@ -143,7 +143,7 @@
             </el-button>
             <el-button
                type="text"
-              @click="deleteHandle('单删', scope.row.id)"
+              @click="deleteHandleTeacher('单删', scope.row.id)"
             >
               <img src="../../images/icons/del.png" style="width: 20px;height: 20px" />
             </el-button>
@@ -187,12 +187,12 @@
           /**
            * 加载页面时进行初始化
            * */
-          this.init()
+          this.initTeacher()
         },
         mounted() {
         },
         methods: {
-          async init () {
+          async initTeacher () {
             const params = {
               page: this.page,
               pageSize: this.pageSize,
@@ -210,12 +210,12 @@
           /**
            * 页面初始页码
            * */
-          handleQuery() {
+          handleQueryTeacher() {
             this.page = 1;
-            this.init();
+            this.initTeacher();
           },
           // 添加
-          add(st) {
+          addTeachers(st) {
             if (st === 'add'){
               window.parent.menuHandle({
                 id: '3',
@@ -232,7 +232,7 @@
           },
 
           // 删除
-          deleteHandle (type, id) {
+          deleteHandleTeacher (type, id) {
             if (type === '批量' && id === null) {
               if (this.checkList.length === 0) {
                 return this.$message.error('请选择删除对象')
@@ -248,7 +248,7 @@
                     this.$message.success('删除成功！');
                   else
                     this.$message.error(res.data);
-                  this.handleQuery()
+                  this.handleQueryTeacher()
                 } else {
                   this.$message.error(res.msg || '操作失败')
                 }
@@ -259,10 +259,10 @@
           },
 
           //状态更改
-          statusHandle (row) {
+          statusHandleTeacher (row) {
             let params = {}
             if (typeof row === 'string' ){
-              if (this.checkList.length == 0){
+              if (this.checkList.length === 0){
                 this.$message.error('批量操作，请先勾选操作！')
                 return false
               }
@@ -281,7 +281,7 @@
              TeacherStatusByStatus(params).then(res => {
                 if (res.code === 1) {
                   this.$message.success('教师状态已经更改成功！')
-                  this.handleQuery()
+                  this.handleQueryTeacher()
                 } else {
                   this.$message.error(res.msg || '操作失败')
                 }
@@ -301,11 +301,11 @@
           },
           handleSizeChange (val) {
             this.pageSize = val
-            this.init()
+            this.initTeacher()
           },
           handleCurrentChange (val) {
             this.page = val
-            this.init()
+            this.initTeacher()
           }
         }
       })

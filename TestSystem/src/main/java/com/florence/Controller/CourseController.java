@@ -24,8 +24,8 @@ public class CourseController {
         return R.success(page1);
     }
 
-    @PostMapping("/add")
-    public R<String> add(String name){
+    @PostMapping("/add/{name}")
+    public R<String> add(@PathVariable String name){
 
         courseService.addCourse(name);
         return R.success("success");
@@ -49,7 +49,7 @@ public class CourseController {
         return R.success("success");
     }
 
-    @PostMapping("/addCourse/#{id}")
+    @PostMapping("/addCourse/{id}")
     public R<String> addCourse(@PathVariable Integer id,Integer username){
         courseService.addMyCourse(username,id);
         return R.success("success");

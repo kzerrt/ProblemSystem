@@ -47,23 +47,23 @@
         >
           <div>
             <el-form-item label="题目名称:" prop="name">
-              <el-input v-model="ruleForm.name" placeholder="请填写教师姓名" maxlength="20"/>
+              <el-input :disabled= ruleForm?"false":"true"  v-model="ruleForm.name" placeholder="请填写题目名称" maxlength="20"
+              />
             </el-form-item>
 
 
             <el-form-item label="题目描述" prop="desc">
-              <el-input v-model="ruleForm.birthday" placeholder="教师年龄" maxlength="20"/>
+              <el-input v-model="ruleForm.desc" placeholder="请输入题目描述" maxlength="20"/>
 
             </el-form-item>
 
             <el-form-item label="题目分值" prop="grade" >
-              <el-input v-model="ruleForm.count" placeholder="请填写账号" maxlength="20"/>
+              <el-input v-model="ruleForm.grade" placeholder="题目分值" maxlength="20"/>
             </el-form-item>
             <el-form-item label="题目类型" prop="type" >
               <el-select v-model="ruleForm.type" placeholder="请选择类型" @change="$forceUpdate()">
                 <el-option
                         v-for="item in types"
-                        :key="item.id"
                         :label="item.name"
                         :value="item.id">
                 </el-option>
@@ -76,13 +76,13 @@
             <el-form-item
               label-width="400px"
             >
-              <el-button @click="goBack()"> 取消 </el-button>
-              <el-button type="primary" @click="submitForm('ruleForm', false)"> 保存 </el-button>
+              <el-button @click="goBackAddTest()"> 取消 </el-button>
+              <el-button type="primary" @click="submitFormAddTest('ruleForm', false)"> 保存 </el-button>
               <el-button
-                v-if="actionType == 'add'"
+                v-if="actionType === 'add'"
                 type="primary"
                 class="continue"
-                @click="submitForm('ruleForm', true)"
+                @click="submitFormAddTest('ruleForm', true)"
               >
                 保存并继续添加
               </el-button>
@@ -110,7 +110,6 @@
             id:'',
             actionType: '',
             ruleForm: {
-              id:'',
               name:'',
               desc:'',
               grade:'',
@@ -125,17 +124,7 @@
             return {
               name: {
                 required: true,
-                message: '请输入教师姓名',
-                trigger: 'blur',
-              },
-              desc:{
-                required: true,
-                message: '请选择性别',
-                trigger: 'blur',
-              },
-              grade:{
-                required: true,
-                message: '请输入分值',
+                message: '请输入题目名称',
                 trigger: 'blur',
               },
 
@@ -149,13 +138,13 @@
           this.id = requestUrlParam('id');
           this.actionType = this.id ? 'edit' : 'add'
           if (this.id) {
-            this.init()
+            this.initAddTest()
           }
           this.getType();
         },
         mounted() {},
         methods: {
-          async init() {
+          async initAddTest() {
             queryTestById(this.id).then((res) => {
               if (String(res.code) === '1') {
                this.ruleForm = res.data;
@@ -167,15 +156,15 @@
           getType(){
             getTypes().then(res =>{
               if(res.code === 1){
-                this.classes = res.data.map((obj) =>({ ...obj,cla : obj.id}))
+                this.types = res.data.map((obj) => ({...obj,id : obj.name}))
               }
             })
           },
-          submitForm(formName, st) {
+          submitFormAddTest(formName, st) {
                 let prams = this.ruleForm;
-                let count = window.sessionStorage.getItem("teacher");
+
                 if (this.actionType === 'add') {
-                  addTest(prams,count.id)
+                  addTest(prams)
                     .then((res) => {
                       if (res.code === 1) {
                         this.$message.success('添加成功！')
@@ -223,7 +212,7 @@
             }
           },
 
-          goBack() {
+          goBackAddTest() {
             window.parent.menuHandle(
               {
                 id: '4',
